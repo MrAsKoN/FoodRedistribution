@@ -13,17 +13,18 @@
         </nav-logo>
         <nav class="navbar">
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Hunger Spots</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Services</a></li>
+                <li><a class="links" href="{% url 'home' %}">Home</a></li>
+                <li><a class="links" href="{% url 'addHungerSpot' %}">Hunger Spots</a></li>
+                <li><a class="links" href="#">Services</a></li>
+                <li><a class="links" href="#">Services</a></li>
+                <li><a class="links" href="#">Services</a></li>
                 <li><a class="login">Login</a></li>
                 <li><a class="signup button" href="base.html">Signup</a></li>
             </ul>
         </nav>
-        
     </header>
+
+{% block content %}
+{% endblock %}
 </body>
 </html>

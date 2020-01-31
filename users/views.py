@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import pyrebase
-
+from PIL import Image
+from PIL.ExifTags import TAGS
 # Create your views here.
 
 firebaseConfig = {
@@ -21,3 +22,12 @@ database = firebase.database()
 
 def base(request):
     return render(request, 'users/base.html')
+
+
+def addHungerSpot(request):
+    if request.method == 'POST':
+        doc = request.FILES['upload']
+        for (tag, value) in Image.open(doc)._getexif().items():
+            print('{} -> {}'.format(TAGS.get(tag), value))
+    return render(request, 'users/addHungerSpot.html')
+
