@@ -75,6 +75,7 @@ header{
     height: 500px;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 
 }
 

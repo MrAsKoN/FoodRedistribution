@@ -8,6 +8,13 @@
                 <input type="file" name="upload">
                 <input type="submit" value="Upload Pic" name="submit">
             </form>
-            ̥</div>
+        </div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock content %}

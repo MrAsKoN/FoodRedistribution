@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import pyrebase
 import exifread
 import re
+from django.contrib import messages
 # Create your views here.
 
 firebaseConfig = {
@@ -49,15 +50,21 @@ def formatCoordinates(coor):
 def addHungerSpot(request):
     if request.method == 'POST':
         doc = request.FILES['upload']
-        tags = exifread.process_file(doc,'rb')
-        geo = {i : tags[i] for i in tags.keys() if i.startswith('GPS')}
-        latitude = str(geo['GPS GPSLatitude'])
-        latitude = formatCoordinates(latitude)
-        longitude = str(geo['GPS GPSLongitude'])
-        longitude = formatCoordinates(longitude)
+        extension = str(doc)
+        extension = extension[extension.index('.')+1:]
+        if extension in ['jpeg','jpg','png']:
+            tags = exifread.process_file(doc,'rb')
+            geo = {i : tags[i] for i in tags.keys() if i.startswith('GPS')}
+            latitude = str(geo['GPS GPSLatitude'])
+            latitude = formatCoordinates(latitude)
+            longitude = str(geo['GPS GPSLongitude'])
+            longitude = formatCoordinates(longitude)
 
-        # print(latitude + " " + longitude)
-        print(latitude)
-        print(longitude)
+            # print(latitude + " " + longitude)
+            print(latitude)
+            print(longitude)
+        else:
+            messages.error(request,'You uploaded an incorrect image format. Please upload an .jpeg, .jpg or .png image file. Thank You.')
+            redirect(addHungerSpot)
     return render(request, 'users/addHungerSpot.html')
 
