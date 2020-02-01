@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import pyrebase
-from PIL import Image
-from PIL.ExifTags import TAGS
+import exifread
+import re
 # Create your views here.
 
 firebaseConfig = {
@@ -23,11 +23,28 @@ database = firebase.database()
 def base(request):
     return render(request, 'users/base.html')
 
+def formatCoordinates(coor):
+    coor = re.sub(r'\[|\]|,','',coor)
+    coor = coor.split(' ')
+    for i in range(len(coor)):
+        if '/' in coor[i]:
+            x = int(coor[i][:coor[i].index('/')])
+            y = int(coor[i][coor[i].index('/') + 1:])
+            coor[i] = str(x / y)
+
+    return ' '.join(coor)
 
 def addHungerSpot(request):
     if request.method == 'POST':
         doc = request.FILES['upload']
-        for (tag, value) in Image.open(doc)._getexif().items():
-            print('{} -> {}'.format(TAGS.get(tag), value))
+        tags = exifread.process_file(doc,'rb')
+        geo = {i : tags[i] for i in tags.keys() if i.startswith('GPS')}
+        latitude = str(geo['GPS GPSLatitude'])
+        latitude = formatCoordinates(latitude) + 'N'
+        longitude = str(geo['GPS GPSLongitude'])
+        longitude = formatCoordinates(longitude) + 'E'
+
+        print(latitude + " " + longitude)
+
     return render(request, 'users/addHungerSpot.html')
 
