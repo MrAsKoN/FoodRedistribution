@@ -26,13 +26,25 @@ def base(request):
 def formatCoordinates(coor):
     coor = re.sub(r'\[|\]|,','',coor)
     coor = coor.split(' ')
+    ans = 0
     for i in range(len(coor)):
         if '/' in coor[i]:
             x = int(coor[i][:coor[i].index('/')])
             y = int(coor[i][coor[i].index('/') + 1:])
-            coor[i] = str(x / y)
+            coor[i] = x / y
+        else:
+            coor[i] = float(coor[i])
 
-    return ' '.join(coor)
+        if i == 0:
+            ans += coor[i]
+
+        if i == 1:
+            ans += (coor[i] * 0.0166667)
+
+        if i == 2:
+            ans += (coor[i] * 0.000277778)
+
+    return ans
 
 def addHungerSpot(request):
     if request.method == 'POST':
@@ -40,11 +52,12 @@ def addHungerSpot(request):
         tags = exifread.process_file(doc,'rb')
         geo = {i : tags[i] for i in tags.keys() if i.startswith('GPS')}
         latitude = str(geo['GPS GPSLatitude'])
-        latitude = formatCoordinates(latitude) + 'N'
+        latitude = formatCoordinates(latitude)
         longitude = str(geo['GPS GPSLongitude'])
-        longitude = formatCoordinates(longitude) + 'E'
+        longitude = formatCoordinates(longitude)
 
-        print(latitude + " " + longitude)
-
+        # print(latitude + " " + longitude)
+        print(latitude)
+        print(longitude)
     return render(request, 'users/addHungerSpot.html')
 
